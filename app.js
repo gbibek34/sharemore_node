@@ -7,12 +7,9 @@ app.use(express.urlencoded({ extended: true }));
 
 //Importing necessary files
 const database = require("./database/connection");
-const userRoute = require("./models/userModel");
-
-const port = 90;
+const userRoute = require("./routes/userRoutes");
 
 app.use(userRoute);
 
-app.listen(port, () => {
-  console.log(`Server started on port ${port}`);
-});
+app.listen(5000);
+console.log("Sharemore server up and running at 5000");
