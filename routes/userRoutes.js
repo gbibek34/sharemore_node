@@ -1,6 +1,6 @@
 const express = require("express");
 const bcrypt = require("bcrypt");
-const jtw = require("jsonwebtoken");
+const jwt = require("jsonwebtoken");
 
 //Creating a router
 const router = new express.Router();
@@ -9,12 +9,13 @@ const router = new express.Router();
 const User = require("../models/userModel");
 
 //Register a user
-router.post("user/register", function (req, res) {
+router.post("/user/register", function (req, res) {
   const username = req.body.username;
   const email = req.body.email;
   const password = req.body.password;
   User.findOne({ username: username })
     .then(function (data) {
+      console.log(data); //!Testing
       if (data != null) {
         res.json({ msg: "Username already exists", success: false });
         return;
@@ -35,8 +36,27 @@ router.post("user/register", function (req, res) {
     });
 });
 
+//Login
+router.post("/user/login", function (req, res) {
+  const username = req.body.username;
+  const password = req.body.password;
+  User.findOne({ username: username }).then(function (userData) {
+    if (userData === null) {
+      return res.json({ msg: "Invalid Username, Try Again!" });
+    } else {
+      bcrypt.compare(password, userData.password, (e, result) => {
+        if (result === false) {
+          return res.json({ message: "Invalid Password, Try Again!" });
+        }
+        const token = jwt.sign({ cid: userData._id }, "anysecretkey");
+        res.json({ token: token, success: true });
+      });
+    }
+  });
+});
+
 //Page not found
-app.get("*", function (req, res) {
+router.get("*", function (req, res) {
   res.json({ msg: "Page not found", success: false });
 });
 
