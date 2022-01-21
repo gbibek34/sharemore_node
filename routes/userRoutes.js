@@ -7,6 +7,8 @@ const router = new express.Router();
 
 //Importing necessary files
 const User = require("../models/userModel");
+const Post = require("../models/postModel");
+
 const verifyUser = require("../auth/auth");
 
 //Register a user
@@ -76,6 +78,19 @@ router.put("/user/update/:user_id", verifyUser, function (req, res) {
 });
 
 //Delete User
+router.delete("/user/delete/:user_id", verifyUser, function (req, res) {
+  const user_id = req.params.user_id;
+  const user = User.findById(user_id);
+  Post.deleteMany({ username: user.username })
+    .then(
+      User.findByIdAndRemove(user_id)
+        .then(
+          res.json({ msg: "User and posts has been deleted", success: true })
+        )
+        .catch({ msg: "User not found!", success: false })
+    )
+    .catch({ msg: "User not found!", success: false });
+});
 
 //Page not found
 router.get("*", function (req, res) {
