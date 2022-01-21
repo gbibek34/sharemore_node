@@ -7,6 +7,7 @@ const router = new express.Router();
 
 //Importing necessary files
 const User = require("../models/userModel");
+const verifyUser = require("../auth/auth");
 
 //Register a user
 router.post("/user/register", function (req, res) {
@@ -54,6 +55,27 @@ router.post("/user/login", function (req, res) {
     }
   });
 });
+
+//Update User
+router.put("/user/update/:user_id", verifyUser, function (req, res) {
+  const user_id = req.params.user_id;
+  const password = req.body.password;
+  bcrypt.hash(password, 10, function (e, hashed_password) {
+    req.body.password = hashed_password;
+    User.findByIdAndUpdate(user_id, {
+      $set: req.body,
+    })
+      .then(function () {
+        res.json({ msg: "User details updated", success: true });
+      })
+      .catch(function (e) {
+        res.json({ msg: "Update Failed!", success: false });
+        console.log(e);
+      });
+  });
+});
+
+//Delete User
 
 //Page not found
 router.get("*", function (req, res) {
