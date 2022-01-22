@@ -12,8 +12,23 @@ const Post = require("../models/postModel");
 const verifyUser = require("../auth/auth");
 
 //Create a post
-router.post("/user/register", function (req, res) {
-    const 
+router.post("/post/create", function (req, res) {
+  const title = req.body.title;
+  Post.findOne({ title: title })
+    .then(function (data) {
+      console.log(data);
+      if (data != null) {
+        res.json({ msg: "Title already exists", success: false });
+        return;
+      } else {
+        const postData = new Post(req.body);
+        postData.save();
+        res.json({ msg: "Post created successfully", success: true });
+      }
+    })
+    .catch(function (e) {
+      res.json({ msg: `Post creation failed ${e}`, success: false });
+    });
 });
 
 //Page not found
