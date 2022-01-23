@@ -71,7 +71,7 @@ router.put("/user/update/:user_id", verifyUser, function (req, res) {
         res.json({ msg: "User details updated", success: true });
       })
       .catch(function (e) {
-        res.json({ msg: "Update Failed!", success: false });
+        res.json({ msg: "User update failed!", success: false });
         console.log(e);
       });
   });

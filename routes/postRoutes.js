@@ -31,6 +31,18 @@ router.post("/post/create", function (req, res) {
     });
 });
 
+//Update Post
+router.put("/post/update/:post_id", verifyUser, function (req, res) {
+  const post_id = req.params.post_id;
+  Post.findByIdAndUpdate(post_id, {
+    $set: req.body,
+  })
+    .then(res.json({ msg: "Post updated successfully", success: true }))
+    .catch(function (e) {
+      res.json({ msg: `Post update failed ${e}`, success: false });
+    });
+});
+
 //Page not found
 router.get("*", function (req, res) {
   res.json({ msg: "Page not found", success: false });
