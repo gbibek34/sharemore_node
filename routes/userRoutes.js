@@ -92,9 +92,4 @@ router.delete("/user/delete/:user_id", verifyUser, function (req, res) {
     .catch({ msg: "User not found!", success: false });
 });
 
-//Page not found
-router.get("*", function (req, res) {
-  res.json({ msg: "Page not found", success: false });
-});
-
 module.exports = router;

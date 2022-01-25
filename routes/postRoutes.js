@@ -79,9 +79,16 @@ router.delete("/post/delete/:post_id", verifyUser, function (req, res) {
   });
 });
 
-//Page not found
-router.get("*", function (req, res) {
-  res.json({ msg: "Page not found", success: false });
+//Get Post
+router.get("/post/:post_id", function (req, res) {
+  const post_id = req.params.post_id;
+  Post.findById(post_id)
+    .then(function (data) {
+      res.json({ msg: data, success: true });
+    })
+    .catch(function (e) {
+      res.json({ msg: `Cannot get post ${e}`, success: false });
+    });
 });
 
 module.exports = router;
