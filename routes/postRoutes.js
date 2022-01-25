@@ -10,6 +10,7 @@ const User = require("../models/userModel");
 const Post = require("../models/postModel");
 
 const verifyUser = require("../auth/auth");
+const { use } = require("bcrypt/promises");
 
 //Create a post
 router.post("/post/create", verifyUser, function (req, res) {
@@ -89,6 +90,29 @@ router.get("/post/:post_id", function (req, res) {
     .catch(function (e) {
       res.json({ msg: `Cannot get post ${e}`, success: false });
     });
+});
+
+//Get Posts
+router.get("/post/", async function (req, res) {
+  const username = req.query.user;
+  const category = req.query.category;
+  try {
+    let posts;
+    if (username) {
+      posts = await Post.find({ username: username });
+    } else if (category) {
+      posts = await Post.find({
+        categories: {
+          $in: [category],
+        },
+      });
+    } else {
+      posts = await Post.find();
+    }
+    res.json({ msg: posts, success: true });
+  } catch (e) {
+    res.json({ msg: `Unable to fetch any posts ${e}`, success: false });
+  }
 });
 
 module.exports = router;
