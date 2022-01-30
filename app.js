@@ -9,9 +9,11 @@ app.use(express.urlencoded({ extended: true }));
 const database = require("./database/connection");
 const userRoute = require("./routes/userRoutes");
 const postRoute = require("./routes/postRoutes");
+const categoryRoute = require("./routes/categoryRoutes");
 
 app.use(userRoute);
 app.use(postRoute);
+app.use(categoryRoute);
 
 app.listen(5000);
 console.log("Sharemore server up and running at 5000");
