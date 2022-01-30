@@ -1,6 +1,4 @@
 const express = require("express");
-const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
 
 //Creating a router
 const router = new express.Router();
@@ -25,6 +23,17 @@ router.post("/category/create", function (req, res) {
     })
     .catch(function (e) {
       res.json({ msg: `Category creation failed ${e}`, success: true });
+    });
+});
+
+//
+router.get("/category/get", function (req, res) {
+  Category.find()
+    .then(function (data) {
+      res.json({ msg: data, success: true });
+    })
+    .catch(function (e) {
+      res.json({ msg: `Cannot fetch categories ${e}`, success: false });
     });
 });
 
