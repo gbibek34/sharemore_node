@@ -6,6 +6,7 @@ const router = new express.Router();
 //Importing necessary files
 const User = require("../models/userModel");
 const Post = require("../models/postModel");
+const upload = require("../helper/fileHelper");
 
 const verifyUser = require("../auth/auth");
 const { use } = require("bcrypt/promises");
@@ -55,6 +56,11 @@ router.put("/post/update/:post_id", verifyUser, function (req, res) {
       }
     });
   });
+});
+
+//Image Upload
+router.post("/image/upload", upload.single("file"), function (req, res) {
+  res.json({ msg: "File uploaded successfully", success: true });
 });
 
 //Delete Post
