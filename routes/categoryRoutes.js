@@ -7,7 +7,7 @@ const router = new express.Router();
 const Category = require("../models/categoryModel");
 
 //Creating a category
-router.post("/category/create", function (req, res) {
+router.post("/create", function (req, res) {
   const name = req.body.name;
   Category.findOne({ name: name })
     .then(function (data) {
@@ -27,7 +27,7 @@ router.post("/category/create", function (req, res) {
 });
 
 //
-router.get("/category/get", function (req, res) {
+router.get("/", function (req, res) {
   Category.find()
     .then(function (data) {
       res.json({ msg: data, success: true });

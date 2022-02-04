@@ -12,14 +12,15 @@ const Post = require("../models/postModel");
 const verifyUser = require("../auth/auth");
 
 //Register a user
-router.post("/user/register", function (req, res) {
+router.post("/register", function (req, res) {
   const username = req.body.username;
   const email = req.body.email;
   const password = req.body.password;
-  User.findOne({ username: username })
+
+  User.findOne({ $or: [{ username: username }, { email: email }] })
     .then(function (data) {
       console.log(data); //!Testing
-      if (data != null) {
+      if (data !== null) {
         res.json({ msg: "Username already exists", success: false });
         return;
       } else {
@@ -40,26 +41,29 @@ router.post("/user/register", function (req, res) {
 });
 
 //Login
-router.post("/user/login", function (req, res) {
+router.post("/login", function (req, res) {
   const username = req.body.username;
   const password = req.body.password;
   User.findOne({ username: username }).then(function (userData) {
     if (userData === null) {
-      return res.json({ msg: "Invalid Username, Try Again!" });
+      return res.json({ msg: "Invalid Username, Try Again!", success: false });
     } else {
       bcrypt.compare(password, userData.password, (e, result) => {
         if (result === false) {
-          return res.json({ message: "Invalid Password, Try Again!" });
+          return res.json({
+            msg: "Invalid Password, Try Again!",
+            success: false,
+          });
         }
         const token = jwt.sign({ cid: userData._id }, "anysecretkey");
-        res.json({ token: token, success: true });
+        res.json({ msg: "Login successful!", token: token, success: true });
       });
     }
   });
 });
 
 //Update User
-router.put("/user/update/:user_id", verifyUser, function (req, res) {
+router.put("/update/:user_id", verifyUser, function (req, res) {
   const user_id = req.params.user_id;
   const password = req.body.password;
   bcrypt.hash(password, 10, function (e, hashed_password) {
@@ -78,7 +82,7 @@ router.put("/user/update/:user_id", verifyUser, function (req, res) {
 });
 
 //Delete User
-router.delete("/user/delete/:user_id", verifyUser, function (req, res) {
+router.delete("/delete/:user_id", verifyUser, function (req, res) {
   const user_id = req.params.user_id;
   const user = User.findById(user_id);
   Post.deleteMany({ username: user.username })
@@ -90,6 +94,18 @@ router.delete("/user/delete/:user_id", verifyUser, function (req, res) {
         .catch({ msg: "User not found!", success: false })
     )
     .catch({ msg: "User not found!", success: false });
+});
+
+//Get User
+router.get("/get", verifyUser, function (req, res) {
+  const user_id = req.userInfo._id;
+  User.findById(user_id)
+    .then(function (data) {
+      res.json({ msg: data, success: true });
+    })
+    .catch(function (e) {
+      res.json({ msg: `Cannot get user ${e}`, success: false });
+    });
 });
 
 module.exports = router;

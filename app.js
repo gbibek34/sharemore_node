@@ -1,4 +1,5 @@
 const express = require("express");
+const cors = require("cors");
 
 var app = express();
 
@@ -11,9 +12,10 @@ const userRoute = require("./routes/userRoutes");
 const postRoute = require("./routes/postRoutes");
 const categoryRoute = require("./routes/categoryRoutes");
 
-app.use(userRoute);
-app.use(postRoute);
-app.use(categoryRoute);
+app.use("/api/user", userRoute);
+app.use("/api/post", postRoute);
+app.use("/api/category", categoryRoute);
+app.use(cors());
 
 app.listen(5000);
 console.log("Sharemore server up and running at 5000");

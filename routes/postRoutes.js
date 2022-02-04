@@ -12,7 +12,7 @@ const verifyUser = require("../auth/auth");
 const { use } = require("bcrypt/promises");
 
 //Create a post
-router.post("/post/create", verifyUser, function (req, res) {
+router.post("/create", verifyUser, function (req, res) {
   const title = req.body.title;
   const user = req.userInfo._id;
   User.findById(user).then(function (data) {
@@ -36,7 +36,7 @@ router.post("/post/create", verifyUser, function (req, res) {
 });
 
 //Update Post
-router.put("/post/update/:post_id", verifyUser, function (req, res) {
+router.put("/update/:post_id", verifyUser, function (req, res) {
   const post_id = req.params.post_id;
   const user = req.userInfo._id;
   User.findById(user).then(function (data) {
@@ -64,7 +64,7 @@ router.post("/image/upload", upload.single("file"), function (req, res) {
 });
 
 //Delete Post
-router.delete("/post/delete/:post_id", verifyUser, function (req, res) {
+router.delete("/delete/:post_id", verifyUser, function (req, res) {
   const post_id = req.params.post_id;
   const user = req.userInfo._id;
   User.findById(user).then(function (data) {
@@ -85,7 +85,7 @@ router.delete("/post/delete/:post_id", verifyUser, function (req, res) {
 });
 
 //Get Post
-router.get("/post/:post_id", function (req, res) {
+router.get("/:post_id", function (req, res) {
   const post_id = req.params.post_id;
   Post.findById(post_id)
     .then(function (data) {
@@ -97,13 +97,13 @@ router.get("/post/:post_id", function (req, res) {
 });
 
 //Get Posts
-router.get("/post/", async function (req, res) {
+router.get("/", async (req, res) => {
   const username = req.query.user;
   const category = req.query.category;
   try {
     let posts;
     if (username) {
-      posts = await Post.find({ username: username });
+      posts = await Post.find({ username });
     } else if (category) {
       posts = await Post.find({
         categories: {
@@ -113,9 +113,9 @@ router.get("/post/", async function (req, res) {
     } else {
       posts = await Post.find();
     }
-    res.json({ msg: posts, success: true });
+    res.status(200).json({ msg: posts, success: true });
   } catch (e) {
-    res.json({ msg: `Unable to fetch any posts ${e}`, success: false });
+    res.status(400).json(`Unable to fetch any posts ${e}`);
   }
 });
 
