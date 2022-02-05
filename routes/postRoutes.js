@@ -6,10 +6,8 @@ const router = new express.Router();
 //Importing necessary files
 const User = require("../models/userModel");
 const Post = require("../models/postModel");
-const upload = require("../helper/fileHelper");
 
 const verifyUser = require("../auth/auth");
-const { use } = require("bcrypt/promises");
 
 //Create a post
 router.post("/create", verifyUser, function (req, res) {
@@ -26,7 +24,11 @@ router.post("/create", verifyUser, function (req, res) {
         } else {
           const postData = new Post(req.body);
           postData.save();
-          res.json({ msg: "Post created successfully", success: true });
+          res.json({
+            msg: "Post created successfully",
+            post: postData,
+            success: true,
+          });
         }
       })
       .catch(function (e) {
@@ -56,11 +58,6 @@ router.put("/update/:post_id", verifyUser, function (req, res) {
       }
     });
   });
-});
-
-//Image Upload
-router.post("/image/upload", upload.single("file"), function (req, res) {
-  res.json({ msg: "File uploaded successfully", success: true });
 });
 
 //Delete Post
@@ -113,9 +110,9 @@ router.get("/", async (req, res) => {
     } else {
       posts = await Post.find();
     }
-    res.status(200).json({ msg: posts, success: true });
+    res.json({ msg: posts, success: true });
   } catch (e) {
-    res.status(400).json(`Unable to fetch any posts ${e}`);
+    res.json(`Unable to fetch any posts ${e}`);
   }
 });
 

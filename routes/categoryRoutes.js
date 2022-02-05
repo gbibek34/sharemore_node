@@ -26,7 +26,7 @@ router.post("/create", function (req, res) {
     });
 });
 
-//
+//Get Categories
 router.get("/", function (req, res) {
   Category.find()
     .then(function (data) {
@@ -34,6 +34,16 @@ router.get("/", function (req, res) {
     })
     .catch(function (e) {
       res.json({ msg: `Cannot fetch categories ${e}`, success: false });
+    });
+});
+
+//Delete Categories
+router.delete("/delete/:category_id", function (req, res) {
+  const category_id = req.body.category_id;
+  Category.findByIdAndDelete(category_id)
+    .then(res.json({ msg: "Category Deleted", success: true }))
+    .catch((e) => {
+      res.json({ msg: `Category deletion failed ${e}`, success: false });
     });
 });
 
